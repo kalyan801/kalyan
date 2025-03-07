@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GST Calculation - Invoice</title>
+    <link rel="stylesheet" href="styles7.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .invoice {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .total {
+            text-align: right;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .thank-you {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice">
+        <h1>GST Calculation - Invoice</h1>
+        <table id="invoice-table">
+            <thead>
+                <tr>
+                    <th>St.no.</th>
+                    <th>Name</th>
+                    <th>Qty.</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added -->
+            </tbody>
+        </table>
+        <div class="total">
+            <p>GST(%): <span id="gst">18</span></p>
+            <p>Total (Before GST): ₹<span id="totalAmount">0</span></p>
+            <p>Total with GST: ₹<span id="totalWithGST">0</span></p>
+        </div>
+        <button onclick="printInvoice()">Print Bill</button>
+        <p class="thank-you">Thank you!</p>
+    </div>
+
+    <script>
+        window.onload = function() {
+            // Get the billing data from localStorage
+            const billingData = JSON.parse(localStorage.getItem('billingData')) || [];
+            let totalAmount = 0;
+            let gstPercentage = 18; // GST rate is 18%
+
+            // Get the table body where the data will be inserted
+            const tableBody = document.getElementById('invoice-table').getElementsByTagName('tbody')[0];
+
+            // Loop through the billing data to populate the table
+            billingData.forEach((item, index) => {
+                const row = tableBody.insertRow(index);
+                row.insertCell(0).innerText = index + 1;
+                row.insertCell(1).innerText = item.name;
+                row.insertCell(2).innerText = item.qty;
+                row.insertCell(3).innerText = item.price;
+
+                // Calculate subtotal for each item
+                const subtotal = item.qty * item.price;
+                row.insertCell(4).innerText = subtotal.toFixed(2);
+
+                // Add to total amount
+                totalAmount += subtotal;
+            });
+
+            // Calculate GST
+            const gstAmount = (totalAmount * gstPercentage) / 100;
+
+            // Calculate total amount with GST
+            const totalWithGST = totalAmount + gstAmount;
+
+            // Update the total and total with GST on the page
+            document.getElementById('totalAmount').innerText = totalAmount.toFixed(2);
+            document.getElementById('totalWithGST').innerText = totalWithGST.toFixed(2);
+        };
+
+        // Function to print the invoice
+        function printInvoice() {
+            window.print(); // Opens the print dialog
+        }
+    </script>
+</body>
+</html>
